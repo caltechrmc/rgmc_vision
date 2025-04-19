@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-
 	<arg name="camera_name" default="usb_cam"/>
 	<arg name="publish_tf" default="true"/>
 	<arg name="rviz" default="true"/>
@@ -23,4 +22,22 @@
         <arg name="publish_tf" value="$(arg publish_tf)"/>
         <arg name="tags_file" value="$(arg tags_file)"/>
     </include>
+
+    <node pkg="tf" type="static_transform_publisher" name="tabletop_broadcaster" args="0 0 0 0 0 0 1 tabletop world 100" />
+
+    <!-- set up the visualizer -->
+    <node pkg="camera_test" type="visualizer.py" name="visualizer" output="screen"/>
+
+    <!-- display the camera model -->
+
+    <!-- display the cube -->
+    <param name="small_cube_description" textfile="$(find camera_test)/assets/small_cube.urdf"/>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="small_cube_state_publisher" >
+        <remap from="robot_description" to="small_cube_description" />
+        <remap from="joint_states" to="small_cube_joint_states" />
+    </node>
+
+    <!-- set up rviz -->
+    <node name="rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find camera_test)/rviz/default.rviz"/>
 </launch>

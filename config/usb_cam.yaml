@@ -10,8 +10,6 @@
   camera_i_usb_port_id: ''
   camera_i_usb_speed: SUPER_PLUS
 
-  rgb_i_publish_compressed: false
-  rgb_i_low_bandwidth: false
   rgb_i_width: 1920
   rgb_i_height: 1080
   rgb_i_fps: 30.0

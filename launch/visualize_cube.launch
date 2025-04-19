@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- display the cube -->
+    <param name="small_cube_description" textfile="$(find camera_test)/assets/small_cube.urdf"/>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="small_cube_state_publisher" >
+        <remap from="robot_description" to="small_cube_description" />
+        <remap from="joint_states" to="small_cube_joint_states" />
+    </node>
+
+    <!-- set up rviz -->
+    <node name="rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find camera_test)/rviz/visualize_cube_default.rviz"/>
+</launch>
