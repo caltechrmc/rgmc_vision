@@ -1,4 +1,4 @@
-/usb_cam:
+/usb_cam_1:
   camera_i_enable_imu: false
   camera_i_enable_ir: false
   camera_i_floodlight_brightness: 0.0
