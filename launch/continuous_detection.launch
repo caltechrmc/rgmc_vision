@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- per‐instance arguments -->
+  <arg name="launch_prefix"   default=""/>
+  <arg name="camera_name"     default="usb_cam"/>
+  <arg name="camera_frame"    default="head_camera"/>
+  <arg name="image_topic"     default="image_rect"/>
+  <arg name="publish_tf"      default="false"/>
+  <arg name="tags_file"       default="$(find rgmc_vision)/config/tag_task1.yaml"/>
+
+  <!--
+    We wrap everything in a group whose namespace is the camera_name.
+    That way you can <include> this file twice (with camera_name=usb_cam_1
+    and camera_name=usb_cam_2), and each node & rosparam set lives under
+    its own /usb_cam_1/... and /usb_cam_2/... tree.
+  -->
+  <group ns="$(arg camera_name)">
+    <!-- load your shared settings.yaml under this namespace -->
+    <rosparam command="load"
+              file="$(find rgmc_vision)/config/settings.yaml"/>
+    <!-- load your tag definitions for this instance -->
+    <rosparam command="load"
+              file="$(arg tags_file)"/>
+
+    <!-- now launch the continuous detector node -->
+    <node pkg="apriltag_ros"
+          type="apriltag_ros_continuous_node"
+          name="apriltag_ros_continuous_node"
+          clear_params="false"
+          launch-prefix="$(arg launch_prefix)">
+      <!-- remap the topics to this camera’s image stream -->
+      <remap from="image_rect"      to="/$(arg camera_name)/rgb/$(arg image_topic)"/>
+      <remap from="camera_info"     to="/$(arg camera_name)/rgb/camera_info"/>
+      <!-- the frame_id used for all published tags -->
+      <param name="camera_frame"             type="string" value="$(arg camera_frame)"/>
+      <!-- visualize detection overlay -->
+      <param name="publish_tag_detections_image" type="bool"  value="true"/>
+      <!-- whether to broadcast TFs -->
+      <param name="publish_tf"               type="bool"  value="$(arg publish_tf)"/>
+    </node>
+  </group>
+</launch>

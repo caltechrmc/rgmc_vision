@@ -1,0 +1,31 @@
+/usb_cam_1:
+  camera_i_enable_imu: false
+  camera_i_enable_ir: false
+  camera_i_floodlight_brightness: 0.0
+  camera_i_ip: ''
+  camera_i_laser_dot_brightness: 800.0
+  camera_i_mx_id: ''
+  camera_i_nn_type: none
+  camera_i_pipeline_type: RGB
+  camera_i_usb_port_id: ''
+  camera_i_usb_speed: SUPER_PLUS
+
+  rgb_i_width: 1920
+  rgb_i_height: 1080
+  rgb_i_fps: 30.0
+  
+/usb_cam_2:
+  camera_i_enable_imu: false
+  camera_i_enable_ir: false
+  camera_i_floodlight_brightness: 0.0
+  camera_i_ip: ''
+  camera_i_laser_dot_brightness: 800.0
+  camera_i_mx_id: ''
+  camera_i_nn_type: none
+  camera_i_pipeline_type: RGB
+  camera_i_usb_port_id: ''
+  camera_i_usb_speed: SUPER_PLUS
+
+  rgb_i_width: 1920
+  rgb_i_height: 1080
+  rgb_i_fps: 30.0
