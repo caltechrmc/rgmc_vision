@@ -1,26 +1,25 @@
 <?xml version="1.0"?>
 <launch>
   <!--============== User‑configurable args ==============-->
-  <arg name="tags_file"          default="$(find rgmc_vision)/config/tags_test.yaml"/>
-  <arg name="publish_tf"         default="true"/>
+  <arg name="tags_file" default="$(find rgmc_vision)/config/tags_test.yaml"/>
+  <arg name="publish_tf" default="true"/>
 
-  <arg name="cam1_name"          default="oak_left"/>
-  <arg name="cam2_name"          default="oak_right"/>
+  <arg name="cam1_name" default="cam1"/>
+  <arg name="cam2_name" default="cam2"/>
 
-  <arg name="cam1_params"        default="$(find rgmc_vision)/config/oak_left.yaml"/>
-  <arg name="cam2_params"        default="$(find rgmc_vision)/config/oak_right.yaml"/>
+  <arg name="cam1_params" default="$(find rgmc_vision)/config/cam1.yaml"/>
+  <arg name="cam2_params" default="$(find rgmc_vision)/config/cam2.yaml"/>
 
   <!--============== Camera 1 Group ==============-->
   <group ns="$(arg cam1_name)">
     <include file="$(find depthai_ros_driver)/launch/camera.launch">
       <arg name="name" value="$(arg cam1_name)"/>
-      <arg name="rectify_rgb" value="true"/>
       <arg name="enable_depth" value="false"/>
       <arg name="rgb_camera_color_profile" value="1920,1080,30"/>
       <arg name="params_file" value="$(arg cam1_params)"/>
     </include>
 
-    <include file="$(find rgmc_vision)/launch/continuous_detection_ns.launch">
+    <include file="$(find rgmc_vision)/launch/continuous_detection.launch">
       <arg name="camera_name" value="$(arg cam1_name)"/>
       <arg name="camera_frame" value="$(arg cam1_name)"/>
       <arg name="publish_tf" value="$(arg publish_tf)"/>
@@ -32,13 +31,12 @@
   <group ns="$(arg cam2_name)">
     <include file="$(find depthai_ros_driver)/launch/camera.launch">
       <arg name="name" value="$(arg cam2_name)"/>
-      <arg name="rectify_rgb" value="true"/>
       <arg name="enable_depth" value="false"/>
       <arg name="rgb_camera_color_profile" value="1920,1080,30"/>
       <arg name="params_file" value="$(arg cam2_params)"/>
     </include>
 
-    <include file="$(find rgmc_vision)/launch/continuous_detection_ns.launch">
+    <include file="$(find rgmc_vision)/launch/continuous_detection.launch">
       <arg name="camera_name" value="$(arg cam2_name)"/>
       <arg name="camera_frame" value="$(arg cam2_name)"/>
       <arg name="publish_tf" value="$(arg publish_tf)"/>
