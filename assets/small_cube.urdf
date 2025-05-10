@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<robot name="small_cube">
+   <link name="cube_corner">
+      <inertial>
+         <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0"/>
+         <mass value="0.12500000558793556"/>
+         <inertia ixx="5.208333721384417e-05" iyy="5.208333721384417e-05" izz="5.208333721384417e-05" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+      <visual name="cube_mesh">
+         <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0"/>
+         <geometry>
+            <mesh filename="package://camera_test/assets/meshes/small_cube.stl" scale="0.001 0.001 0.001"/>
+         </geometry>
+         <material name="blue"/>
+      </visual>
+   </link>
+
+   <link name="cube_center"/>
+
+   <!-- April tag links -->
+   <link name="tag_A"/>
+   <link name="tag_B"/>
+   <link name="tag_C"/>
+   <link name="tag_D"/>
+   <link name="tag_E"/>
+   <link name="tag_F"/>
+
+   <joint type="fixed" name="cube_corner2cube_center_fixed">
+      <parent link="cube_corner"/>
+      <child link="cube_center"/>
+      <origin xyz="0.025 0.025 0.025" rpy="0.0 0.0 1.57079632679"/>
+   </joint>
+
+   <!-- Transformations from cube center to april tags-->
+   <joint type="fixed" name="cube_center2tag_A_fixed">
+      <parent link="cube_center"/>
+      <child link="tag_A"/>
+      <origin xyz="-0.01 -0.01 0.0249" rpy="0.0 0.0 1.57079632679"/>
+   </joint>
+   <joint type="fixed" name="cube_center2tag_B_fixed">
+      <parent link="cube_center"/>
+      <child link="tag_B"/>
+      <origin xyz="-0.01 0.0249 0.01" rpy="0.0 1.57079632679 1.57079632679"/>
+   </joint>
+   <joint type="fixed" name="cube_center2tag_C_fixed">
+      <parent link="cube_center"/>
+      <child link="tag_C"/>
+      <origin xyz="-0.0249 -0.01 -0.01" rpy="-1.57079632679 0.0 1.57079632679"/>
+   </joint>
+   <joint type="fixed" name="cube_center2tag_D_fixed">
+      <parent link="cube_center"/>
+      <child link="tag_D"/>
+      <origin xyz="0.01 -0.0249 -0.01" rpy="-1.57079632679 0.0 3.14159265359"/>
+   </joint>
+   <joint type="fixed" name="cube_center2tag_E_fixed">
+      <parent link="cube_center"/>
+      <child link="tag_E"/>
+      <origin xyz="0.01 0.01 -0.0249" rpy="0.0 3.14159265359 0.0"/>
+   </joint>
+   <joint type="fixed" name="cube_center2tag_F_fixed">
+      <parent link="cube_center"/>
+      <child link="tag_F"/>
+      <origin xyz="0.0249 -0.01 0.01" rpy="0.0 1.57079632679 0.0"/>
+   </joint>
+
+   <material name="blue">
+      <color rgba="0 0 1 1"/>
+   </material>
+</robot>

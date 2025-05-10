@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="camera_name" default="usb_cam"/>
+	<arg name="publish_tf" default="true"/>
+	<arg name="rviz" default="true"/>
+    <arg name="record" default="true"/>
+    <arg name="tags_file"/>
+
+	<!-- set up camera -->
+    <include file="$(find depthai_ros_driver)/launch/camera.launch">
+        <arg name="enable_depth" value="false"/>
+        <arg name="rectify_rgb" value="true"/>
+        <arg name="rgb_camera_color_profile" value="1920,1080,30"/>
+        <arg name="name" value="$(arg camera_name)"/>
+        <arg name="params_file" value="$(find rgmc_vision)/config/usb_cam.yaml"/>
+    </include>
+
+	<!-- set up apriltag detector -->
+    <include file="$(find rgmc_vision)/launch/continuous_detection.launch">
+        <arg name="camera_name" value="$(arg camera_name)"/>
+        <arg name="camera_frame" value="$(arg camera_name)"/>
+        <arg name="publish_tf" value="$(arg publish_tf)"/>
+        <arg name="tags_file" value="$(arg tags_file)"/>
+    </include>
+
+    <node pkg="tf" type="static_transform_publisher" name="tabletop_broadcaster" args="0 0 0 0 0 0 1 tabletop world 100" />
+
+    <!-- set up the visualizer -->
+    <node pkg="rgmc_vision" type="visualizer.py" name="visualizer" output="screen"/>
+
+    <!-- display the camera model -->
+
+    <!-- display the cube -->
+    <param name="small_cube_description" textfile="$(find rgmc_vision)/assets/small_cube.urdf"/>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="small_cube_state_publisher" >
+        <remap from="robot_description" to="small_cube_description" />
+        <remap from="joint_states" to="small_cube_joint_states" />
+    </node>
+
+    <!-- set up rviz -->
+    <node name="rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find rgmc_vision)/rviz/default.rviz"/>
+</launch>

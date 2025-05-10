@@ -1,77 +1,69 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- general args -->
-    <arg name="publish_tf" default="true"/>
-    <arg name="tags_file"/>
+  <!--============== User‑configurable args ==============-->
+  <arg name="tags_file"          default="$(find rgmc_vision)/config/tags_test.yaml"/>
+  <arg name="publish_tf"         default="true"/>
 
-    <arg name="camera_name_1" default="usb_cam_1"/>
-    <arg name="camera_name_2" default="usb_cam_2"/>
+  <arg name="cam1_name"          default="oak_left"/>
+  <arg name="cam2_name"          default="oak_right"/>
 
-    <!-- Camera 1 -->
+  <arg name="cam1_params"        default="$(find rgmc_vision)/config/oak_left.yaml"/>
+  <arg name="cam2_params"        default="$(find rgmc_vision)/config/oak_right.yaml"/>
+
+  <!--============== Camera 1 Group ==============-->
+  <group ns="$(arg cam1_name)">
     <include file="$(find depthai_ros_driver)/launch/camera.launch">
-        <arg name="rectify_rgb" value="false"/>
-        <arg name="enable_depth" value="false"/>
-        <arg name="rgb_camera_color_profile" value="1920,1080,30"/>
-        <arg name="name" value="$(arg camera_name_1)"/>
-        <arg name="params_file" value="$(find rgmc_vision)/config/multicam.yaml"/>
-    </include>
-    <include file="$(find rgmc_vision)/launch/continuous_detection.launch">
-        <arg name="camera_name"  value="$(arg camera_name_1)"/>
-        <arg name="camera_frame" value="$(arg camera_name_1)"/>
-        <arg name="publish_tf"   value="$(arg publish_tf)"/>
-        <arg name="tags_file"    value="$(arg tags_file)"/>
+      <arg name="name" value="$(arg cam1_name)"/>
+      <arg name="rectify_rgb" value="true"/>
+      <arg name="enable_depth" value="false"/>
+      <arg name="rgb_camera_color_profile" value="1920,1080,30"/>
+      <arg name="params_file" value="$(arg cam1_params)"/>
     </include>
 
-    <!-- Camera 2 -->
+    <include file="$(find rgmc_vision)/launch/continuous_detection_ns.launch">
+      <arg name="camera_name" value="$(arg cam1_name)"/>
+      <arg name="camera_frame" value="$(arg cam1_name)"/>
+      <arg name="publish_tf" value="$(arg publish_tf)"/>
+      <arg name="tags_file" value="$(arg tags_file)"/>
+    </include>
+  </group>
+
+  <!--============== Camera 2 Group ==============-->
+  <group ns="$(arg cam2_name)">
     <include file="$(find depthai_ros_driver)/launch/camera.launch">
-        <arg name="rectify_rgb" value="false"/>
-        <arg name="enable_depth" value="false"/>
-        <arg name="rgb_camera_color_profile" value="1920,1080,30"/>
-        <arg name="name" value="$(arg camera_name_2)"/>
-        <arg name="params_file" value="$(find rgmc_vision)/config/multicam.yaml"/>
-    </include>
-    <include file="$(find rgmc_vision)/launch/continuous_detection.launch">
-        <arg name="camera_name"  value="$(arg camera_name_2)"/>
-        <arg name="camera_frame" value="$(arg camera_name_2)"/>
-        <arg name="publish_tf"   value="$(arg publish_tf)"/>
-        <arg name="tags_file"    value="$(arg tags_file)"/>
+      <arg name="name" value="$(arg cam2_name)"/>
+      <arg name="rectify_rgb" value="true"/>
+      <arg name="enable_depth" value="false"/>
+      <arg name="rgb_camera_color_profile" value="1920,1080,30"/>
+      <arg name="params_file" value="$(arg cam2_params)"/>
     </include>
 
-    <!-- world → tabletop -->
-    <!--
-    <node pkg="tf" type="static_transform_publisher" name="tabletop_broadcaster"
-          args="0 0 0 0 0 0 1 tabletop world 100"/>
-    -->
+    <include file="$(find rgmc_vision)/launch/continuous_detection_ns.launch">
+      <arg name="camera_name" value="$(arg cam2_name)"/>
+      <arg name="camera_frame" value="$(arg cam2_name)"/>
+      <arg name="publish_tf" value="$(arg publish_tf)"/>
+      <arg name="tags_file" value="$(arg tags_file)"/>
+    </include>
+  </group>
 
-    <!-- cam2 → cam1 (set real extrinsics here) -->
-    <!--
-    <node pkg="tf" type="static_transform_publisher" name="cam2_to_cam1"
-          args="0.1 0 0 0 0 0 1 
-                usb_cam_2_rgb_camera_optical_frame 
-                usb_cam_1_rgb_camera_optical_frame 100"/>
-    -->
+  <!--============== Static transforms ==============-->
+  <node pkg="tf" type="static_transform_publisher" name="tabletop_broadcaster"
+        args="0 0 0 0 0 0 1 tabletop world 100"/>
 
-    <!-- set up the visualizer -->
-    <!--
-    <node pkg="rgmc_vision" type="tag_detection_merger.py" name="tag_detection_merger" output="screen"/>
-    -->
+  <node pkg="tf" type="static_transform_publisher" name="cam2_to_cam1"
+        args="0.10 0 0 0 0 0 1 \
+              $(arg cam2_name)/rgb_camera_optical_frame \
+              $(arg cam1_name)/rgb_camera_optical_frame 100"/>
 
-    <!-- visualizer now listens on /merged_tag_detections -->
-    <!--
-    <node pkg="rgmc_vision" type="visualizer.py"      name="visualizer"      output="screen"/>
-    -->
+  <!--============== Visualizer & RViz ==============-->
+  <node pkg="rgmc_vision" type="visualizer.py" name="visualizer" output="screen"/>
 
-    <!-- display the cube -->
-    <!--
-    <param name="small_cube_description" textfile="$(find rgmc_vision)/assets/small_cube.urdf"/>
-    <node  pkg="robot_state_publisher" type="robot_state_publisher" name="small_cube_state_publisher">
-        <remap from="robot_description" to="small_cube_description"/>
-        <remap from="joint_states"    to="small_cube_joint_states"/>
-    </node>
-    -->
+  <param name="small_cube_description" textfile="$(find rgmc_vision)/assets/small_cube.urdf"/>
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="small_cube_state_publisher">
+    <remap from="robot_description" to="small_cube_description"/>
+    <remap from="joint_states"      to="small_cube_joint_states"/>
+  </node>
 
-    <!-- rviz (optional) -->
-    <!--
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rgmc_vision)/rviz/default.rviz"/>
-    -->
+  <node name="rviz" pkg="rviz" type="rviz"
+        args="-d $(find rgmc_vision)/rviz/default.rviz"/>
 </launch>

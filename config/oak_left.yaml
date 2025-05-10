@@ -1,0 +1,18 @@
+camera:
+  i_enable_imu: false
+  i_nn_type: none
+  i_pipeline_type: RGB
+  i_usb_speed: SUPER_PLUS
+  i_board_socket_id: 0
+  i_mx_id: '1944301071BFE01200'  # Replace with actual MXID for left camera 14442C10318DE4D200
+
+rgb:
+  resolution: '1080'
+  fps: 30
+  i_low_bandwidth: false
+  i_output_isp: true
+  i_output_raw: false
+  i_output_video: false
+  i_board_socket_id: 0
+  i_keep_aspect_ratio: false
+  i_align: false
